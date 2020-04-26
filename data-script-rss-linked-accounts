@@ -1,0 +1,109 @@
+<?php
+namespace ns_mycodebuzz\data_xscript;
+set_time_limit(500);
+
+class cls_data_xscript extends \phpcrud\Data{
+  function __construct() {
+    parent::__construct();
+    $this->obj_theme=new \phpcrud\ThemeData();
+    $this->bln_record_console=false;
+  }
+  function fn_execute(){
+    $this->str_action="run-script";
+    parent::fn_execute();
+  }
+  function fn_run_script(){
+    $this->fn_run_script_linkedaccount_update();
+  }
+
+  function fn_run_script_linkedaccount_update(){
+    $this->fn_loop_customer();
+  }
+
+  function fn_loop_customer(){
+
+    $str_sql="SELECT linkedfrom, linkedto FROM `data176592`.`linkedaccounts` ;";
+    $stmt = $this->obj_pdo->pdo->query($str_sql);
+
+    $this->int_column_count=$stmt->columnCount();
+    echo '<table id="my-table" class="display" style="width:100%">'.PHP_EOL;
+    echo "<thead>".PHP_EOL;
+    echo "<tr>".PHP_EOL;
+    for ($i = 0; $i < $this->int_column_count; $i++) {
+        $col = $stmt->getColumnMeta($i);
+        echo "<th>".$col['name']."</th>".PHP_EOL;
+    }
+    echo "</tr>".PHP_EOL;
+    echo "</thead>".PHP_EOL;
+    echo "<tbody>".PHP_EOL;
+
+    //while($row=$stmt->fetchAll(PDO::FETCH_ASSOC)){
+    $arr_rows=$stmt->fetchAll();
+
+
+    echo "<tr>".PHP_EOL;
+    echo "</tr>".PHP_EOL;
+    echo "<tr>".PHP_EOL;
+    echo '<td colspan="'.$this->int_column_count.'">'.PHP_EOL;
+
+    $int_i=0;
+    foreach ($arr_rows as $key => $value) {
+      fn_echo("start");
+      $int_i++;
+      $arr_row=$value;
+      $this->fn_action_customer($arr_row);
+      fn_echo("end");
+      //if($int_i==3){break;}
+    }
+
+    echo '</td>'.PHP_EOL;
+    echo "</tr>".PHP_EOL;
+
+    echo "</tbody>".PHP_EOL;
+    echo "</table>".PHP_EOL;
+  }
+
+  function fn_action_customer($arr_row){
+
+    $arr_keys=array_keys($arr_row);
+    $int_id_linked_from=$arr_row["linkedfrom"];
+    $int_id_linked_to=$arr_row["linkedto"];
+    fn_echo("int_id_linked_from", $int_id_linked_from);
+    fn_echo("int_id_linked_to", $int_id_linked_to);
+    //*
+    //$str_sql="SELECT linkedfrom, linkedto  FROM `data176592`.`linkedaccounts` WHERE linkedfrom=? and linkedto=?;";
+    $str_sql="DELETE FROM `data176592`.`linkedaccounts` WHERE linkedfrom=? and linkedto=?;";
+    //$str_sql="DELETE FROM `data176592`.`linkedaccounts` WHERE linkedfrom=? and linkedto=?;";
+    //$str_sql="UPDATE  `data176592`.`linkedaccounts` SET WHERE linkedfrom=? and linkedto=?;";
+    $arr_param=[$int_id_linked_to, $int_id_linked_from];
+    //fn_echo("str_sql", $str_sql);
+
+    echo $this->obj_pdo->interpolateQuery($str_sql, $arr_param);
+    $stmt = $this->obj_pdo->pdo->prepare($str_sql);
+    $stmt->execute($arr_param);
+
+    return;
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    if($row){
+      $xint_id_linked_from=$row["linkedfrom"];
+      $xint_id_linked_to=$row["linkedto"];
+      fn_echo("xint_id_linked_from", $xint_id_linked_from);
+      fn_echo("xint_id_linked_to", $xint_id_linked_to);
+    }
+    else{
+      fn_echo("nothing to see here");
+    }
+    //**/
+  }
+  function fn_get_rss_schema_name($int_id_customer){
+    $str_len=strlen($int_id_customer);
+    $str_pad=str_pad($int_id_customer, 6, "0", STR_PAD_LEFT);
+    return "data".$str_pad;
+  }
+
+}//END CLASS DATA XADMN
+
+
+
+
+?>

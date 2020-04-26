@@ -1,0 +1,5 @@
+{
+    "require": {
+        "race4space/php-lib-crud": "^3.1"
+    }
+}
