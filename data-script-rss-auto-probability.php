@@ -1,8 +1,8 @@
 <?php
-namespace ns_mycodebuzz\data_xscript;
+namespace DataXscript;
 set_time_limit(500);
 
-class cls_data_xscript extends \phpcrud\Data{
+class DataXscript extends \phpcrud\Data{
   function __construct() {
     parent::__construct();
     $this->obj_theme=new \phpcrud\ThemeData();

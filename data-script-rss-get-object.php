@@ -1,8 +1,8 @@
 <?php
-namespace ns_mycodebuzz\data_xscript;
+namespace DataXscript;
 set_time_limit(500);
 
-class cls_data_xscript extends \phpcrud\Data{
+class DataXscript extends \phpcrud\Data{
   function __construct() {
     parent::__construct();
     $this->obj_theme=new \phpcrud\ThemeData();
@@ -16,7 +16,6 @@ class cls_data_xscript extends \phpcrud\Data{
     $this->fn_run_script_create_new_object();
   }
 
-
   function fn_run_script_create_new_object(){
 
     $this->view_step=false;
@@ -25,16 +24,16 @@ class cls_data_xscript extends \phpcrud\Data{
     $obj_clone=json_decode($str_json, false);
     $this->obj_clone=$obj_clone;
     if(!isset ($obj_clone->SchemaName) OR !isset ($obj_clone->ObjectName) OR !isset ($obj_clone->ObjectNames) OR !isset ($obj_clone->ParentObjectName)){
-      fn_echo("CREATE OBJECT : Provide Schema Name, Object Name, Object Names, ParentObjectName as Per the Following Example :-<BR><BR>");
+      $this->fn_echo("CREATE OBJECT : Provide Schema Name, Object Name, Object Names, ParentObjectName as Per the Following Example :-<BR><BR>");
       die('{"SchemaName":"data182219","ObjectName":"Finance","ObjectNames":"Finances","ParentObjectName":"Account"}');
     }
     else{
-    fn_echo("SchemaName", $obj_clone->SchemaName);
-    fn_echo("ObjectName", $obj_clone->ObjectName);
-    fn_echo("ObjectNames", $obj_clone->ObjectNames);
-    fn_echo("ParentObjectName", $obj_clone->ParentObjectName);
+    $this->fn_echo("SchemaName", $obj_clone->SchemaName);
+    $this->fn_echo("ObjectName", $obj_clone->ObjectName);
+    $this->fn_echo("ObjectNames", $obj_clone->ObjectNames);
+    $this->fn_echo("ParentObjectName", $obj_clone->ParentObjectName);
     }
-    fn_echo("<br>");
+    $this->fn_echo("<br>");
 
     if($obj_clone->SchemaName!==$this->con_schema){
       die("--Error-- Connection SchemaName[$this->con_schema] Should Match Target SchemaName[$obj_clone->SchemaName]");
@@ -43,7 +42,7 @@ class cls_data_xscript extends \phpcrud\Data{
     $obj_clone->ObjectNameLower=strtolower($obj_clone->ObjectName);
     $str_name_schema=$obj_clone->SchemaName;
 
-    $this->str_date=fn_get_sql_date();
+    $this->str_date=$this->fn_get_sql_date();
 
     //*
     $this->fn_create_data_table();
@@ -56,7 +55,7 @@ class cls_data_xscript extends \phpcrud\Data{
     $this->fn_create_record_grid_control();
     $this->fn_create_record_menutab();
     //*/
-    fn_echo("RSS Object Creation completed");
+    $this->fn_echo("RSS Object Creation completed");
 
 
   }
