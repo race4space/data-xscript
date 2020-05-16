@@ -1,8 +1,8 @@
 <?php
-namespace ns_mycodebuzz\data_xscript;
+namespace DataXscript;
 set_time_limit(500);
 
-class cls_data_xscript extends \phpcrud\Data{
+class DataXscript extends \phpcrud\Data{
   function __construct() {
     parent::__construct();
     $this->obj_theme=new \phpcrud\ThemeData();
@@ -20,14 +20,14 @@ class cls_data_xscript extends \phpcrud\Data{
 
     $this->view_step=true;
     $this->bln_debug_script=false;
-    $this->str_date=fn_get_sql_date();
+    $this->str_date=$this->fn_get_sql_date();
 
     $str_json=$this->str_data_query;
     $obj_my=json_decode($str_json, false);
     $this->obj_my=$obj_my;
 
     if(!isset ($obj_my->SchemaName) OR !isset ($obj_my->ObjectName)){
-      fn_echo("CREATE NEW CUSTOM FIELDS : Provide Schema Name, Object Name as Per the Following Example :-<BR><BR>");
+      $this->fn_echo("CREATE NEW CUSTOM FIELDS : Provide Schema Name, Object Name as Per the Following Example :-<BR><BR>");
       die('{"SchemaName":"data182219","ObjectName":"Contact"}');
     }
     if($obj_my->SchemaName!==$this->con_schema){
@@ -36,9 +36,9 @@ class cls_data_xscript extends \phpcrud\Data{
 
     $obj_my->HowMany=5;
     //*
-    fn_echo("SchemaName", $obj_my->SchemaName);
-    fn_echo("ObjectName", $obj_my->ObjectName);
-    fn_echo("<br>");
+    $this->fn_echo("SchemaName", $obj_my->SchemaName);
+    $this->fn_echo("ObjectName", $obj_my->ObjectName);
+    $this->fn_echo("<br>");
     //*/
 
     $str_name_schema=$obj_my->SchemaName;
@@ -65,7 +65,7 @@ class cls_data_xscript extends \phpcrud\Data{
 
 
     //*/
-    fn_echo("Script completed");
+    $this->fn_echo("Script completed");
   }
   function fn_initialize($str_name_schema, $str_name_object){
 
@@ -95,10 +95,10 @@ class cls_data_xscript extends \phpcrud\Data{
     $this->str_name_table=$str_name_table;
     $this->str_name_table_lower=strtolower($this->str_name_table);
 
-    fn_echo("Qualified SchemaName", $this->str_name_schema);
-    fn_echo("Qualified ObjectName", $this->str_name_object);
-    fn_echo("Qualified Table", $this->str_name_table);
-    fn_echo("<br>");
+    $this->fn_echo("Qualified SchemaName", $this->str_name_schema);
+    $this->fn_echo("Qualified ObjectName", $this->str_name_object);
+    $this->fn_echo("Qualified Table", $this->str_name_table);
+    $this->fn_echo("<br>");
   }
 
   function fn_create_data_table(){
@@ -113,9 +113,9 @@ class cls_data_xscript extends \phpcrud\Data{
     }
     if(empty($int_drop_and_insert_after)){
       $this->str_sql="SELECT FieldName FROM `$str_name_schema`.`datadictionary` where tablename=\"$str_name_table\" and customfield order by fieldname desc LIMIT 1;";
-      //fn_echo("this->str_sql", $this->str_sql);
+      //$this->fn_echo("this->str_sql", $this->str_sql);
       $str_after=$this->fn_fetch_column();
-      $this->int_drop_and_insert_after=fn_replace("Custom", "", $str_after);
+      $this->int_drop_and_insert_after=$this->fn_replace("Custom", "", $str_after);
     }
     if(empty($this->int_drop_and_insert_after)){
       die("Drop And Insert After Not Set (Must Have One Exisitng Custom Field)");
@@ -130,10 +130,10 @@ class cls_data_xscript extends \phpcrud\Data{
     $str_name_field_after="Custom$int_after";
     $str_name_field_current="Custom$int_current";
 
-    fn_echo("Insert Number", $obj_my->HowMany);
-    fn_echo("Insert After", $str_name_field_after);
-    fn_echo("Starting With", $str_name_field_current);
-    fn_echo("<br>");
+    $this->fn_echo("Insert Number", $obj_my->HowMany);
+    $this->fn_echo("Insert After", $str_name_field_after);
+    $this->fn_echo("Starting With", $str_name_field_current);
+    $this->fn_echo("<br>");
 
     $s="";
     $str_list_column="";
@@ -144,7 +144,7 @@ class cls_data_xscript extends \phpcrud\Data{
       $str_list_column.="'$str_name_field_current'$str_separator";
 
       $this->str_sql="SHOW COLUMNS FROM `$str_name_schema`.`$str_name_table` LIKE '$str_name_field_current';";
-      if($this->bln_debug_script){fn_echo("this->str_sql", $this->str_sql);}
+      if($this->bln_debug_script){$this->fn_echo("this->str_sql", $this->str_sql);}
       $str_exist=$this->fn_fetch_column();
       if(!empty($str_exist)){
           $s.="DROP COLUMN `$str_name_field_current`$str_separator";
@@ -161,7 +161,7 @@ class cls_data_xscript extends \phpcrud\Data{
         $s.=$str_drop;
         $this->str_sql=$s;
         if($this->bln_debug_script){
-          fn_echo("this->str_sql", $this->str_sql);
+          $this->fn_echo("this->str_sql", $this->str_sql);
         }
         $this->fn_record_action();
     }
@@ -185,7 +185,7 @@ class cls_data_xscript extends \phpcrud\Data{
     $s.=";";
     $this->str_sql=$s;
     if($this->bln_debug_script){
-      fn_echo("this->str_sql", $this->str_sql);
+      $this->fn_echo("this->str_sql", $this->str_sql);
     }
     $this->fn_record_action();
   }
@@ -203,7 +203,7 @@ class cls_data_xscript extends \phpcrud\Data{
     if(!empty($this->str_list_column)){
       $this->str_sql="DELETE FROM $str_name_schema.datadictionary where TABLENAME='$this->str_name_object' AND CustomField AND FIELDNAME IN($this->str_list_column);";
       if($this->bln_debug_script){
-        fn_echo("this->str_sql", $this->str_sql);
+        $this->fn_echo("this->str_sql", $this->str_sql);
       }
       $this->fn_record_action();
     }
@@ -310,7 +310,7 @@ heredoc;
     if(!empty($this->str_list_column)){
       $this->str_sql="DELETE FROM $str_name_schema.form where NAME='$this->str_name_object_lower' AND RECORDNAME IN($this->str_list_column);";
       if($this->bln_debug_script){
-        fn_echo("this->str_sql", $this->str_sql);
+        $this->fn_echo("this->str_sql", $this->str_sql);
       }
       $this->fn_record_action();
     }

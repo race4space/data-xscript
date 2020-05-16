@@ -19,10 +19,10 @@ class cls_data_xscript extends \phpcrud\Data{
   function fn_run_script_owner(){
     $this->bln_debug=false;
 
-    $this->str_id_owner="58479,65396,65489,65493,57252,65474";
-    $this->int_id_customer=85575;
-    $this->str_id_ignore="188496,187271";
-    $this->int_interval=10000;
+    $this->str_id_owner="70772,70770,70793, 70824, 70830, 70831,";
+    $this->int_id_customer=193202;
+    $this->str_id_ignore="";
+    $this->int_interval=10;
 
     $str_sql="SELECT id FROM `control`.`support-check` where int_check=0 and id<>$this->int_id_customer and id not in($this->str_id_ignore) order by id desc;";
     $stmt = $this->obj_pdo->pdo->query($str_sql);
