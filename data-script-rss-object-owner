@@ -1,8 +1,8 @@
 <?php
-namespace ns_mycodebuzz\data_xscript;
+namespace DataXscript;
 set_time_limit(500);
 
-class cls_data_xscript extends \phpcrud\Data{
+class DataXscript extends \phpcrud\Data{
   function __construct() {
     parent::__construct();
     $this->obj_theme=new \phpcrud\ThemeData();
@@ -12,6 +12,7 @@ class cls_data_xscript extends \phpcrud\Data{
     $this->str_action="run-script";
     parent::fn_execute();
   }
+
   function fn_run_script(){
     $this->fn_run_script_ownerid();
   }
@@ -20,14 +21,14 @@ class cls_data_xscript extends \phpcrud\Data{
 
     $this->view_step=true;
     $this->bln_debug_script=true;
-    $this->str_date=fn_get_sql_date();
+    $this->str_date=$this->fn_get_sql_date();
 
     $str_json=$this->str_data_query;
     $obj_my=json_decode($str_json, false);
     $this->obj_my=$obj_my;
 
     if(!isset ($obj_my->SchemaName) OR !isset ($obj_my->ObjectName)){
-      fn_echo("Provide Schema Nameas Per the Following Example :-<BR><BR>");
+      $this->fn_echo("Provide Schema Nameas Per the Following Example :-<BR><BR>");
       die('{"SchemaName":"data182219", "ObjectName":"Opportunity"}');
     }
     if($obj_my->SchemaName!==$this->con_schema){
@@ -53,7 +54,7 @@ class cls_data_xscript extends \phpcrud\Data{
     5. Alter GridControl
     6 .Update existing opps to acocunt owner.
     //*/
-    fn_echo("Script completed");
+    $this->fn_echo("Script completed");
   }
   function fn_get_rss_schema_name($int_id_customer){
     $str_len=strlen($int_id_customer);
@@ -103,10 +104,10 @@ class cls_data_xscript extends \phpcrud\Data{
     $this->str_name_table=$str_name_table;
     $this->str_name_table_lower=strtolower($this->str_name_table);
 
-    fn_echo("Qualified SchemaName", $this->str_name_schema);
-    fn_echo("Qualified ObjectName", $this->str_name_object);
-    fn_echo("Qualified Table", $this->str_name_table);
-    fn_echo("<br>");
+    $this->fn_echo("Qualified SchemaName", $this->str_name_schema);
+    $this->fn_echo("Qualified ObjectName", $this->str_name_object);
+    $this->fn_echo("Qualified Table", $this->str_name_table);
+    $this->fn_echo("<br>");
   }
 
   function fn_create_data_table(){
@@ -120,7 +121,7 @@ class cls_data_xscript extends \phpcrud\Data{
     $str_name_field_current="OwnerId";
     $str_list_column.="'$str_name_field_current'$str_separator";
     $this->str_sql="SHOW COLUMNS FROM `$str_name_schema`.`$str_name_table` LIKE 'OwnerId';";
-    if($this->bln_debug_script){fn_echo("this->str_sql", $this->str_sql);}
+    if($this->bln_debug_script){$this->fn_echo("this->str_sql", $this->str_sql);}
     $str_exist=$this->fn_fetch_column();
     if(!empty($str_exist)){
         $s.="DROP COLUMN `$str_name_field_current`$str_separator";
@@ -134,7 +135,7 @@ class cls_data_xscript extends \phpcrud\Data{
       $s.=$str_drop;
       $this->str_sql=$s;
       if($this->bln_debug_script){
-        fn_echo("this->str_sql", $this->str_sql);
+        $this->fn_echo("this->str_sql", $this->str_sql);
       }
       $this->fn_record_action();
     }
@@ -147,7 +148,7 @@ class cls_data_xscript extends \phpcrud\Data{
     $s.=";";
     $this->str_sql=$s;
     if($this->bln_debug_script){
-      fn_echo("this->str_sql", $this->str_sql);
+      $this->fn_echo("this->str_sql", $this->str_sql);
     }
     $this->fn_record_action();
   }
@@ -159,7 +160,7 @@ class cls_data_xscript extends \phpcrud\Data{
 
     $this->str_sql="DELETE FROM $str_name_schema.datadictionary where TABLENAME='$this->str_name_object' AND FIELDNAME IN('OwnerId');";
     if($this->bln_debug_script){
-      fn_echo("this->str_sql", $this->str_sql);
+      $this->fn_echo("this->str_sql", $this->str_sql);
     }
     $this->fn_record_action();
 
@@ -263,7 +264,7 @@ heredoc;
 
     $this->str_sql="DELETE FROM $str_name_schema.form where NAME='$this->str_name_object_lower' AND RECORDNAME IN('OwnerId');";
     if($this->bln_debug_script){
-      fn_echo("this->str_sql", $this->str_sql);
+      $this->fn_echo("this->str_sql", $this->str_sql);
     }
     $this->fn_record_action();
 
@@ -330,7 +331,7 @@ heredoc;
 
     $this->str_sql="UPDATE  $str_name_schema.object set PermissionOwnerId=\"$this->str_name_table.OwnerId\" where NAME=\"$this->str_name_object\";";
     if($this->bln_debug_script){
-      fn_echo("this->str_sql", $this->str_sql);
+      $this->fn_echo("this->str_sql", $this->str_sql);
     }
     $this->fn_record_action();
   }
@@ -340,13 +341,13 @@ heredoc;
 
     $this->str_sql="UPDATE  $str_name_schema.gridcontrol set SQLFROM=\"$this->str_name_table LEFT JOIN Account ON $this->str_name_table.AccountId=Account.Id LEFT JOIN User ON $this->str_name_table.OwnerId=User.Id\" where NAME=\"$this->str_names_object\";";
     if($this->bln_debug_script){
-      fn_echo("this->str_sql", $this->str_sql);
+      $this->fn_echo("this->str_sql", $this->str_sql);
     }
     $this->fn_record_action();
 
     $this->str_sql="UPDATE  $str_name_schema.gridcontrol set SQLFROM=\"$this->str_name_table INNER JOIN Account ON $this->str_name_table.AccountId=Account.Id LEFT JOIN User ON $this->str_name_table.OwnerId=User.Id\" where NAME=\"$this->str_name_parentobject$this->str_names_object\";";
     if($this->bln_debug_script){
-      fn_echo("this->str_sql", $this->str_sql);
+      $this->fn_echo("this->str_sql", $this->str_sql);
     }
     $this->fn_record_action();
   }
@@ -356,13 +357,11 @@ heredoc;
 
     $this->str_sql="UPDATE  $str_name_schema.$this->str_name_table join $str_name_schema.account on Accountid=Account.Id set $this->str_name_table.OwnerId=Account.OwnerId;";
     if($this->bln_debug_script){
-      fn_echo("this->str_sql", $this->str_sql);
+      $this->fn_echo("this->str_sql", $this->str_sql);
     }
     $this->fn_record_action();
   }
-}//END CLASS DATA XADMN
+}
 
 
-
-
-  ?>
+?>

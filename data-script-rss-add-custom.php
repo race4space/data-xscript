@@ -12,6 +12,7 @@ class DataXscript extends \phpcrud\Data{
     $this->str_action="run-script";
     parent::fn_execute();
   }
+
   function fn_run_script(){
     $this->fn_run_script_create_new_customfields();
   }
@@ -19,25 +20,27 @@ class DataXscript extends \phpcrud\Data{
   function fn_run_script_create_new_customfields(){
 
     $this->view_step=true;
-    $this->bln_debug_script=false;
+    $this->bln_debug_script=true;
     $this->str_date=$this->fn_get_sql_date();
 
     $str_json=$this->str_data_query;
     $obj_my=json_decode($str_json, false);
     $this->obj_my=$obj_my;
 
-    if(!isset ($obj_my->SchemaName) OR !isset ($obj_my->ObjectName)){
+    if(!isset ($obj_my->SchemaName) OR !isset ($obj_my->ObjectName) OR !isset ($obj_my->HowMany) OR !isset ($obj_my->FieldDef) ){
       $this->fn_echo("CREATE NEW CUSTOM FIELDS : Provide Schema Name, Object Name as Per the Following Example :-<BR><BR>");
-      die('{"SchemaName":"data182219","ObjectName":"Contact"}');
+      die('{"SchemaName":"data182219","ObjectName":"Contact","HowMany":"5","FieldDef":"LONGTEXT"}');
     }
     if($obj_my->SchemaName!==$this->con_schema){
       die("--Error-- Connection SchemaName[$this->con_schema] Should Match Target SchemaName[$obj_my->SchemaName]");
     }
 
-    $obj_my->HowMany=5;
+    //$obj_my->HowMany=40;
     //*
     $this->fn_echo("SchemaName", $obj_my->SchemaName);
     $this->fn_echo("ObjectName", $obj_my->ObjectName);
+    $this->fn_echo("HowMany", $obj_my->HowMany);
+    $this->fn_echo("FieldDef", $obj_my->FieldDef);
     $this->fn_echo("<br>");
     //*/
 
@@ -106,14 +109,16 @@ class DataXscript extends \phpcrud\Data{
     $str_name_schema=$this->str_name_schema;
     $str_name_table=$this->str_name_table;
     $int_how_many=$obj_my->HowMany;
+    $str_field_def=$obj_my->FieldDef;
     $str_separator=", ";
 
     if(isset ($obj_my->DropAndInsertAfterExistFieldNumber)){
         $this->int_drop_and_insert_after=$obj_my->DropAndInsertAfterExistFieldNumber;
     }
     if(empty($int_drop_and_insert_after)){
-      $this->str_sql="SELECT FieldName FROM `$str_name_schema`.`datadictionary` where tablename=\"$str_name_table\" and customfield order by fieldname desc LIMIT 1;";
+      $this->str_sql="SELECT FieldName FROM `$str_name_schema`.`datadictionary` where tablename=\"$str_name_table\" and customfield order by abs(replace(fieldname, 'Custom', ''))  desc LIMIT 1;";
       //$this->fn_echo("this->str_sql", $this->str_sql);
+      if($this->bln_debug_script){$this->fn_echo("this->str_sql", $this->str_sql);}
       $str_after=$this->fn_fetch_column();
       $this->int_drop_and_insert_after=$this->fn_replace("Custom", "", $str_after);
     }
@@ -175,7 +180,7 @@ class DataXscript extends \phpcrud\Data{
       $int_current=str_pad($int_current, 2, "0", STR_PAD_LEFT);
       $str_name_field_after="Custom$int_after";
       $str_name_field_current="Custom$int_current";
-      $s.="ADD COLUMN `$str_name_field_current` LONGTEXT NULL DEFAULT NULL AFTER `$str_name_field_after`$str_separator";
+      $s.="ADD COLUMN `$str_name_field_current` $str_field_def NULL DEFAULT NULL AFTER `$str_name_field_after`$str_separator";
 
       $int_after++;
       $int_current++;
@@ -373,5 +378,6 @@ heredoc;
     }
   }
 }
+
 
 ?>
