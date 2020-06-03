@@ -28,7 +28,7 @@ class DataXscript extends \phpcrud\Data{
     $this->obj_my=$obj_my;
 
     if(!isset ($obj_my->SchemaName) OR !isset ($obj_my->ObjectName)){
-      $this->fn_echo("Provide Schema Nameas Per the Following Example :-<BR><BR>");
+      $this->fn_echo("OWNERID Provide Schema Nameas Per the Following Example :-<BR><BR>");
       die('{"SchemaName":"data182219", "ObjectName":"Opportunity"}');
     }
     if($obj_my->SchemaName!==$this->con_schema){
