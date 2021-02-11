@@ -28,7 +28,7 @@ class DataXscript extends \phpcrud\Data{
 
     if(!isset ($obj_my->SchemaName)){
       $this->fn_echo("AUTO PROBABILITY : Provide Schema Nameas Per the Following Example :-<BR><BR>");
-      die('{"SchemaName":"data182219"}');
+      die('{"SchemaName":"data182219", "ApplyAuto":"true"}');
     }
     if($obj_my->SchemaName!==$this->con_schema){
       die("--Error-- Connection SchemaName[$this->con_schema] Should Match Target SchemaName[$obj_my->SchemaName]");
